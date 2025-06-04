@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Game Mengetik Sederhana</title>
+<style>
+  body {
+    font-family: monospace, monospace;
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+    background-color: #f0f0f0;
+    color: #222;
+    text-align: center;
+  }
+  #words {
+    font-size: 24px;
+    margin-bottom: 20px;
+    user-select: none;
+  }
+  #input {
+    font-size: 20px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #timer {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  #result {
+    margin-top: 30px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>Game Mengetik Sederhana</h1>
+<div id="words"></div>
+<input type="text" id="input" placeholder="Ketik kata di atas..." autofocus autocomplete="off" />
+<div id="timer">Waktu: 60 detik</div>
+<div id="result"></div>
+
+<script>
+  const wordsEl = document.getElementById('words');
+  const inputEl = document.getElementById('input');
+  const timerEl = document.getElementById('timer');
+  const resultEl = document.getElementById('result');
+
+  const wordsList = [
+    'saya', 'ingin', 'belajar', 'ngoding', 'javascript', 'html', 'css',
+    'programming', 'komputer', 'keyboard', 'mouse', 'laptop', 'internet',
+    'game', 'mengetik', 'challenge', 'speed', 'practice', 'belajar', 'cepat'
+  ];
+
+  let currentWords = [];
+  let currentIndex = 0;
+  let score = 0;
+  let timeLeft = 60;
+  let timerId;
+
+  function generateWords() {
+    currentWords = [];
+    for(let i = 0; i < 10; i++) {
+      const randIndex = Math.floor(Math.random() * wordsList.length);
+      currentWords.push(wordsList[randIndex]);
+    }
+    wordsEl.textContent = currentWords.join(' ');
+    currentIndex = 0;
+    score = 0;
+    inputEl.value = '';
+    resultEl.textContent = '';
+  }
+
+  function startTimer() {
+    timerEl.textContent = `Waktu: ${timeLeft} detik`;
+    timerId = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = `Waktu: ${timeLeft} detik`;
+      if(timeLeft <= 0) {
+        clearInterval(timerId);
+        inputEl.disabled = true;
+        showResult();
+      }
+    }, 1000);
+  }
+
+  function showResult() {
+    resultEl.textContent = `Waktu habis! Skor kamu: ${score} kata benar`;
+  }
+
+  inputEl.addEventListener('input', () => {
+    const inputWords = inputEl.value.trim().split(' ');
+    const lastWord = inputWords[inputWords.length - 1];
+    const targetWord = currentWords[currentIndex];
+
+    if(lastWord === targetWord) {
+      score++;
+      currentIndex++;
+      if(currentIndex >= currentWords.length) {
+        generateWords();
+      }
+      inputEl.value = '';
+    }
+  });
+
+  // Mulai game saat halaman load
+  window.onload = () => {
+    generateWords();
+    startTimer();
+  };
+</script>
+
+</body>
+</html>
